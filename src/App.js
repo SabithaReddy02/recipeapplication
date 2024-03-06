@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+// In your component file
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
+  const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  const fetchRecipes = async () => {
+    try {
+      const response = await fetch('https://api.edamam.com/api/recipes/v2?type=public&q=lunch&app_id=e2137b30&app_key=%200447e7315ed8838095a0ba6435f97015%09');
+      const data = await response.json();
+      console.log(data)
+      setRecipes(data.hits);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Recipe App</h1>
+      <div className="recipes">
+        {recipes?.map(recipe => (
+          <div key={recipe} className="recipe">
+            <h2>{recipe.recipe.label}</h2>
+            <img src={recipe.recipe.image} alt={recipe.title} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
